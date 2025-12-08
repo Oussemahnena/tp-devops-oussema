@@ -1,0 +1,52 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'MAVEN_3'
+        jdk 'JDK17'
+    }
+
+    stages {
+
+        stage('Checkout - Git') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/TON_USER/TON_REPO.git',
+                    credentialsId: 'git-credentials-id'
+            }
+        }
+
+        stage('Clean') {
+            steps {
+                bat 'mvn clean'
+            }
+        }
+
+        stage('Compile') {
+            steps {
+                bat 'mvn compile'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                bat 'mvn test'
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('sonarqube-server') {
+                    bat 'mvn sonar:sonar'
+                }
+            }
+        }
+
+        stage('Package') {
+            steps {
+                bat 'mvn package'
+                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+            }
+        }
+    }
+}
