@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: tp-projet-container
-          image: tp-projet-2025:1.0
-          imagePullPolicy: Never
+          image: oussem128/tp-projet-2025:1.0
+          imagePullPolicy: Always
           ports:
             - containerPort: 8089
